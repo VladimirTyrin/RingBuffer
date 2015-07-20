@@ -54,6 +54,10 @@ buffer_pop(ring_buffer buffer, void *dest, size_t data_size);
 
 
 void
+buffer_clear(ring_buffer buffer);
+
+
+void
 buffer_print_info(const ring_buffer buffer, FILE *stream);
 
 

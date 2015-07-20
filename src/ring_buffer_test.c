@@ -55,16 +55,40 @@ push_read_test(void **state)
   uint8_t byte_fin = 10;
 
   buffer_push(buffer, &byte_src, 1);
+  assert_int_equal(buffer_data_size(buffer), 1);
   buffer_push(buffer, &a_src, sizeof(int));
+  assert_int_equal(buffer_data_size(buffer), sizeof(int) + 1);
   buffer_push(buffer, &b_src, sizeof(int));
+  assert_int_equal(buffer_space_available(buffer), 0);
 
   buffer_pop(buffer, &byte_fin, 1);
   buffer_pop(buffer, &a_fin, sizeof(int));
   buffer_pop(buffer, &b_fin, sizeof(int));
 
-  //assert_int_equal(byte_src, byte_fin);
+  assert_int_equal(byte_src, byte_fin);
   assert_int_equal(a_src, a_fin);
   assert_int_equal(b_src, b_fin);
+
+  buffer_destroy(buffer);
+}
+
+
+static
+void
+clear_test(void **state)
+{
+  (void) state;
+  ring_buffer buffer = buffer_init(CAPACITY);
+  int int_var = 1;
+
+  buffer_push(buffer, &int_var, sizeof(int));
+  buffer_clear(buffer);
+
+  assert_int_equal(buffer_space_available(buffer), CAPACITY);
+  assert_ptr_equal(buffer->begin, buffer->data);
+  assert_ptr_equal(buffer->end, buffer->data);
+
+  buffer_destroy(buffer);
 }
 
 
@@ -73,7 +97,8 @@ static const
 UnitTest
 tests[] = {
   unit_test(init_destroy_test),
-  unit_test(push_read_test)
+  unit_test(push_read_test),
+  unit_test(clear_test)
 };
 
 
