@@ -92,13 +92,32 @@ clear_test(void **state)
 }
 
 
+static
+void
+errors_test(void **state)
+{
+  (void) state;
+
+  ring_buffer buffer = buffer_init(0);
+  assert_int_equal(buffer, 0);
+
+  buffer = buffer_init(CAPACITY);
+  
+  int buffer_state = buffer_push(buffer, buffer, CAPACITY + 1);
+  assert_int_equal(buffer_state, BS_ENOMEM);
+
+  buffer_state = buffer_read(buffer, buffer, CAPACITY + 1);
+  assert_int_equal(buffer_state, BS_EINVAL);
+}
+
 /* Standard tests for ring_buffer */
 static const
 UnitTest
 tests[] = {
   unit_test(init_destroy_test),
   unit_test(push_read_test),
-  unit_test(clear_test)
+  unit_test(clear_test),
+  unit_test(errors_test)
 };
 
 
