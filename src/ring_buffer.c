@@ -36,7 +36,7 @@ buffer_init(size_t capacity)
 
 
 void
-destroy_ring_buffer(ring_buffer buffer)
+buffer_destroy(ring_buffer buffer)
 {
   if (! buffer)
     return;
@@ -119,9 +119,10 @@ buffer_read(ring_buffer buffer, void *dest, size_t data_size)
         {
           memcpy(dest, buffer->begin, end_data_segment);
           memcpy(dest + end_data_segment, buffer->data,
-                 data_size - end_free_segment);
+                 data_size - end_data_segment);
         }
     }
+  return BS_OK;
 }
 
 

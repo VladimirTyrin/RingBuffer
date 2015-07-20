@@ -1,9 +1,9 @@
-#include <stdio.h>
+#include "ring_buffer_test.h"
 
+#include <stdio.h>
 
 int
 main(void)
 {
-  printf("Hello world!\n");
-  return 0;
+  return test_ring_buffer();
 }
