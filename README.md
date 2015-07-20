@@ -4,9 +4,9 @@
 
 * git
 * gcc
-# cmake
-# make
-# [cmockery](https://github.com/lpabon/cmockery2)
+* cmake
+* make
+* [cmockery](https://github.com/lpabon/cmockery2)
 
 ## Test
 
