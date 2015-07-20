@@ -9,6 +9,7 @@
 #include <setjmp.h>
 #include <stdint.h>
 #include <assert.h>
+#include <inttypes.h>
 
 #include <cmockery/cmockery.h>
 
@@ -40,11 +41,39 @@ init_destroy_test(void **state)
 }
 
 
+static
+void
+push_read_test(void **state)
+{
+  (void) state;
+  ring_buffer buffer = buffer_init((2 * sizeof(int)) + 1);
+  int a_src = 1;
+  int b_src = 2;
+  int a_fin = -1;
+  int b_fin = -2;
+  uint8_t byte_src = 5;
+  uint8_t byte_fin = 10;
+
+  buffer_push(buffer, &byte_src, 1);
+  buffer_push(buffer, &a_src, sizeof(int));
+  buffer_push(buffer, &b_src, sizeof(int));
+
+  buffer_pop(buffer, &byte_fin, 1);
+  buffer_pop(buffer, &a_fin, sizeof(int));
+  buffer_pop(buffer, &b_fin, sizeof(int));
+
+  //assert_int_equal(byte_src, byte_fin);
+  assert_int_equal(a_src, a_fin);
+  assert_int_equal(b_src, b_fin);
+}
+
+
 /* Standard tests for ring_buffer */
 static const
 UnitTest
 tests[] = {
-  unit_test(init_destroy_test)
+  unit_test(init_destroy_test),
+  unit_test(push_read_test)
 };
 
 

@@ -73,7 +73,7 @@ buffer_push(ring_buffer buffer, void *data, size_t data_size)
   if (buffer->end >= buffer->begin)
     {
       end_free_segment = buffer->data + buffer->capacity - buffer->end
-                         + buffer->begin == buffer->data ? 0 : 1;
+                         + (buffer->begin == buffer->data ? 0 : 1);
       if (end_free_segment >= data_size) /* Simple case */
         {
           memcpy(buffer->end, data, data_size);
@@ -110,7 +110,7 @@ buffer_read(ring_buffer buffer, void *dest, size_t data_size)
   else
     {
       end_data_segment = buffer->data + buffer->capacity - buffer->begin
-                         + buffer->begin == buffer->data ? 0 : 1;
+                         + (buffer->begin == buffer->data ? 0 : 1);
       if (end_data_segment >= data_size) /* Simple case */
         {
           memcpy(dest, buffer->begin, data_size);
@@ -129,5 +129,24 @@ buffer_read(ring_buffer buffer, void *dest, size_t data_size)
 enum BUFFER_STATUS
 buffer_pop(ring_buffer buffer, void *dest, size_t data_size)
 {
-  return buffer_read(buffer, dest, data_size);
+  enum BUFFER_STATUS result = buffer_read(buffer, dest, data_size);
+  if (result == BS_OK)
+    {
+      buffer->begin += data_size;
+      if (buffer->begin > buffer->data + buffer->capacity)
+        buffer->begin -= buffer->capacity;
+    }
+  return result;
+}
+
+
+void
+buffer_print_info(const ring_buffer buffer, FILE *stream)
+{
+  fprintf(stream, "-------- RING BUFFER ----------\n");
+  fprintf(stream, "Capacity:   %zu\n", buffer->capacity);
+  fprintf(stream, "Data size:  %zu\n", buffer_data_size(buffer));
+  fprintf(stream, "Free space: %zu\n", buffer_space_available(buffer));
+  fprintf(stream, "Begin:      %ld\n", buffer->begin - buffer->data);
+  fprintf(stream, "End:        %ld\n", buffer->end - buffer->data);
 }
