@@ -60,6 +60,7 @@ push_read_test(void **state)
   buffer_pop(buffer, &byte_fin, 1);
   assert_int_equal(buffer_data_size(buffer), sizeof(int));
   buffer_push(buffer, &b_src, sizeof(int));
+  assert_int_equal(buffer_data_size(buffer), sizeof(int) * 2);
 
   buffer_pop(buffer, &a_fin, sizeof(int));
   buffer_pop(buffer, &b_fin, sizeof(int));
