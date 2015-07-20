@@ -1,0 +1,4 @@
+#ifndef RING_BUFFER_TEST_H
+#define RING_BUFFER_TEST_H
+
+#endif // RING_BUFFER_TEST_H
