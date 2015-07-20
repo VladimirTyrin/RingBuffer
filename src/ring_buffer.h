@@ -7,7 +7,7 @@
 
 enum BUFFER_STATUS
 {
-  BS_OK = 0,          /* Operation successful *?
+  BS_OK = 0,          /* Operation successful */
   BS_ENOMEM = ENOMEM, /* Not enough memory */
   BS_EINVAL = EINVAL  /* Invalid arguments */
 };
