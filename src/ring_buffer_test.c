@@ -46,7 +46,7 @@ void
 push_read_test(void **state)
 {
   (void) state;
-  ring_buffer buffer = buffer_init((2 * sizeof(int)) + 1);
+  ring_buffer buffer = buffer_init((2 * sizeof(int)));
   int a_src = 1;
   int b_src = 2;
   int a_fin = -1;
@@ -57,11 +57,10 @@ push_read_test(void **state)
   buffer_push(buffer, &byte_src, 1);
   assert_int_equal(buffer_data_size(buffer), 1);
   buffer_push(buffer, &a_src, sizeof(int));
-  assert_int_equal(buffer_data_size(buffer), sizeof(int) + 1);
-  buffer_push(buffer, &b_src, sizeof(int));
-  assert_int_equal(buffer_space_available(buffer), 0);
-
   buffer_pop(buffer, &byte_fin, 1);
+  assert_int_equal(buffer_data_size(buffer), sizeof(int));
+  buffer_push(buffer, &b_src, sizeof(int));
+
   buffer_pop(buffer, &a_fin, sizeof(int));
   buffer_pop(buffer, &b_fin, sizeof(int));
 
