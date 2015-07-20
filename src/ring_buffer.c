@@ -61,3 +61,72 @@ buffer_space_available(const ring_buffer buffer)
 {
   return buffer->capacity - buffer_data_size(buffer);
 }
+
+
+enum BUFFER_STATUS
+buffer_push(ring_buffer buffer, void *data, size_t data_size)
+{
+  if (data_size > buffer_space_available(buffer))
+    return BS_ENOMEM;
+
+  size_t end_free_segment;
+  if (buffer->end >= buffer->begin)
+    {
+      end_free_segment = buffer->data + buffer->capacity - buffer->end
+                         + buffer->begin == buffer->data ? 0 : 1;
+      if (end_free_segment >= data_size) /* Simple case */
+        {
+          memcpy(buffer->end, data, data_size);
+          buffer->end += data_size;
+        }
+      else
+        {
+          memcpy(buffer->end, data, end_free_segment);
+          memcpy(buffer->data, data + end_free_segment,
+                 data_size - end_free_segment);
+          buffer->end = buffer->data + data_size - end_free_segment;
+        }
+    }
+  else
+    {
+      memcpy(buffer->end, data, data_size);
+      buffer->end += data_size;
+    }
+  return BS_OK;
+}
+
+
+enum BUFFER_STATUS
+buffer_read(ring_buffer buffer, void *dest, size_t data_size)
+{
+  if (data_size > buffer_data_size(buffer))
+    return BS_EINVAL;
+
+  size_t end_data_segment;
+  if (buffer->end >= buffer->begin)
+    {
+      memcpy(dest, buffer->begin, data_size);
+    }
+  else
+    {
+      end_data_segment = buffer->data + buffer->capacity - buffer->begin
+                         + buffer->begin == buffer->data ? 0 : 1;
+      if (end_data_segment >= data_size) /* Simple case */
+        {
+          memcpy(dest, buffer->begin, data_size);
+        }
+      else
+        {
+          memcpy(dest, buffer->begin, end_data_segment);
+          memcpy(dest + end_data_segment, buffer->data,
+                 data_size - end_free_segment);
+        }
+    }
+}
+
+
+enum BUFFER_STATUS
+buffer_pop(ring_buffer buffer, void *dest, size_t data_size)
+{
+  return buffer_read(buffer, dest, data_size);
+}

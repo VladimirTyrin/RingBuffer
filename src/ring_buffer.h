@@ -45,11 +45,11 @@ buffer_push(ring_buffer buffer, void *data, size_t data_size);
 
 
 enum BUFFER_STATUS
-buffer_pop(ring_buffer buffer, void *dest, size_t data_size);
+buffer_read(ring_buffer buffer, void *dest, size_t data_size);
 
 
 enum BUFFER_STATUS
-buffer_read(ring_buffer buffer, void *dest, size_t data_size);
+buffer_pop(ring_buffer buffer, void *dest, size_t data_size);
 
 
 #endif // RING_BUFFER_H
